@@ -1,0 +1,48 @@
+{
+  "Home": {
+    "intro": "立即生成你嘅 FPS QR Code — no app, no login.",
+    "button": {
+      "jump_to_qr": "撳呢度去生成 FPS QR Code"
+    },
+    "how_to": {
+      "title": "如何操作",
+      "steps": "1. 撳上面嘅掣去QR生成器 \n2. 選擇你嘅 FPS ID 種類（FPS ID/手提電話/電郵）\n3. 寫上ID\n4. 點擊生成，呢個 QR Code 可以喺流動理財/Boc Pay+/AlipayHK/Wechat Pay HK/Octopus Pay等平臺使用。"
+    }
+  },
+  "QrGenerator": {
+    "generate_error":"生成錯誤",
+    "normal_error":"錯誤", 
+    "generate_button": "生成 QR Code",
+    "page_title": "轉數快 QR 產生器",
+    "label": {
+        "value": "你嘅 FPS 地址",
+        "confirm_value": "Confirm 多一次",
+        "type": {
+          "fps_id":"轉數快識別碼",
+          "mobile_number":"手提電話號碼",
+          "email":"電郵地址",
+          "hkid": "香港身份證"
+        },
+        "transaction_amount": "數目",
+        "hint": {
+            "fps_id":"例：123456789",
+            "mobile_number": "例：98765432",
+            "email": "例：you@example.com",
+            "detected_type": "類型",
+            "unified": "請輸入 FPS ID/電郵地址/電話號碼",
+            "confirm": "請輸入 FPS ID/電郵地址/電話號碼",
+            "transaction_amount": "若果將此欄目留空，金額將由付款人選擇。"
+        },
+        "button": {
+            "generating": "生成緊...",
+            "generate_qr_code": "生成 QR Code"
+        },
+        "error" :{
+          "values_do_not_match": "",
+          "invalid_identifier": ""
+        },
+        "text_qr_code_display":"你嘅 QR Code 會喺呢度顯示"
+
+    }
+  }
+}

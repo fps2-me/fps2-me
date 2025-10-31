@@ -1,0 +1,38 @@
+{
+  "Home": {
+    "intro": "Generate your HKFPS QR instantly — no app, no login. Everything stays within your device.",
+    "button": {
+      "jump_to_qr": "Click here to generate FPS Code"
+    },
+    "how_to": {
+      "title": "How does it works?",
+      "steps": "1. Go to the generator\n2. Select your FPS ID Type\n3. Input the ID\n4. Click Generate and use this qr code to mobile banks/Boc Pay+/AlipayHK/Wechat Pay HK/Octopus Pay, etc."
+    }
+  },
+  "QrGenerator": {
+    "generate_error":"Generation Error",
+    "normal_error":"Error", 
+    "generate_button": "Generate QR Code",
+    "page_title": "HKFPS QR Generator",
+    "label": {
+        "type": "ID type",
+        "value": "Your FPS ID / Email / Phone",
+        "confirm_value": "Confirm your input",
+        "fps_id": "FPS ID",
+        "mobile_number": "Mobile Number",
+        "email": "E-mail",
+        "transaction_amount": "Payment amount",
+        "hint": {
+            "fps_id":"e.g. 123456789",
+            "mobile_number": "e.g. 98765432",
+            "email": "e.g. you@example.com",
+            "transaction_amount": "HKD only. Leave blank to let payees choose."
+        },
+        "button": {
+            "generating": "Generating...",
+            "generate_qr_code": "Generate QR Code"
+        },
+        "text_qr_code_display":"Your QR Code will be displayed here"
+    }
+  }
+}

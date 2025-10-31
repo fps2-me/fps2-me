@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+.halloween {
+  --background: #0d0d0d; /* 更深的背景，营造恐怖氛围 */
+  --foreground: #ff7518; /* 活泼的南瓜橙色文字 */
+  --primary: #9400d3;    /* 一种神秘的紫色作为强调色 */
+  --secondary: #32cd32;  /* 像怪物史莱姆一样的亮绿色 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-noto-sans-hk);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Noto Sans HK", Arial, Helvetica, sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
