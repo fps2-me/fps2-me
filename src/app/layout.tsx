@@ -5,6 +5,7 @@ import {NextIntlClientProvider} from 'next-intl';
 import {getLocale} from 'next-intl/server';
 
 import Script  from "next/script";
+import { Footer } from "./components/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,21 +48,6 @@ type Props = {
   children: React.ReactNode;
 };
 
-// export default function RootLayout({
-//   children,
-// }: Readonly<{
-//   children: React.ReactNode;
-// }>) {
-//   return (
-//     <html lang="en">
-//       <body
-//         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-//       >
-//         {children}
-//       </body>
-//     </html>
-//   );
-// }
 
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'zh-HK' }];
@@ -89,8 +75,13 @@ export default async function RootLayout({children}: Props) {
           `}
         </Script>
       </head>
-      <body className="halloween">  
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      <body className="flex min-h-screen flex-col">  
+        <NextIntlClientProvider>
+          <main className="flex-grow">
+            {children}
+            </main>
+          <Footer />
+          </NextIntlClientProvider>
       </body>
     </html>
   );

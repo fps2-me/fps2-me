@@ -3,8 +3,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { QRCodeCanvas } from "qrcode.react"; 
 import { Sparkles, Loader2, Mail, Hash, Smartphone, IdCard } from 'lucide-react';
+import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import { useTranslations } from 'next-intl';
-import HKQR from 'hkqr-fps'; 
+import HKQR from 'hkqr-fps';
+import { HKQR_CURRENCY } from 'hkqr-fps/dist/cjs/HKQR/config'; 
 
 
 export default function QrGeneratorPage() {
@@ -16,31 +18,32 @@ export default function QrGeneratorPage() {
   const [idValue, setIdValue] = useState('');
   const [confirmIdValue, setConfirmIdValue] = useState('');
   const [paymentAmount, setPaymentAmount] = useState<number | null>(null);
+  const [paymentCurrency, setPaymentCurrency] = useState<HKQR_CURRENCY>("HKD");
   
   // State for QR generation
   const [finalQrString, setFinalQrString] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [logoImage, setLogoImage] = useState('');
 
-  // --- 魔法發生的地方！自動偵測輸入類型 ---
+  // Detect input ID Type
   const detectedIdType: IdentifierType | null = useMemo(() => {
     const value = idValue.trim();
     if (!value) return null;
 
 
-    // 規則 1: 包含 @ -> Email
+    // 1: Email
     if (value.includes('@')) {
       return 'email';
     }
-    // 規則 2: 9位純數字 -> FPS ID
+    // 2: 9 digits -> FPS ID
     if (/^\d{9}$/.test(value)) {
       return 'fpsId';
     }
-    // 規則 3: 8位純數字 -> 香港電話號碼
+    // 3: 8 digits -> HK Phone Numbers
     if (/^(\d{8})$/.test(value)) {
       return 'mobile';
     }
-    // 規則 4: 中國內地手提號碼
+    // 4: China Mainland Phone Numbers
     else if (/^86(\d{11})$/.test(value)) {
       setIdValue(`+86-${value.replace(/^86(\d{11})$/, "$1")}`);
     }
@@ -49,7 +52,7 @@ export default function QrGeneratorPage() {
     }
     
 
-    return null; // 不符合任何規則
+    return null;
   }, [idValue]);
 
   const formatConfirmId = (v: string | null) => {
@@ -69,7 +72,6 @@ export default function QrGeneratorPage() {
     setConfirmIdValue(value);
   };
 
-  // Logo Generation Effect (no changes needed)
   useEffect(() => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -88,9 +90,8 @@ export default function QrGeneratorPage() {
       ctx.fillText(text, canvas.width / 2, canvas.height / 2);
       setLogoImage(canvas.toDataURL('image/png'));
     }
-  }, []);
+  }, [logoImage]);
 
-  // --- 更新過的 QR 產生邏輯 ---
   const handleGenerateClick = () => {
     if (idValue !== confirmIdValue) {
       alert(t('error.values_do_not_match'));
@@ -112,7 +113,6 @@ export default function QrGeneratorPage() {
         const qr = new HKQR();
         qr.setMerchantName("NA");
 
-        // 使用我們自動偵測到的類型
         switch (detectedIdType) {
           case 'fpsId':
             qr.setMerchantAccountFPSId(idValue);
@@ -124,6 +124,8 @@ export default function QrGeneratorPage() {
             qr.setMerchantAccountEmail(idValue);
             break;
         }
+
+        qr.setTransactionCurrency(paymentCurrency);
 
         if (paymentAmount && paymentAmount > 0) {
           qr.setTransactionAmount(paymentAmount);
@@ -148,86 +150,108 @@ export default function QrGeneratorPage() {
     }, 500);
   };
   
-  // --- 用來顯示偵測到的類型圖示和文字 ---
   const DetectedTypeIndicator = () => {
-    if (!detectedIdType) return null;
+    if (!detectedIdType) return (
+      <div className="flex items-center gap-2 text-sm px-1">
+        <span>{t('label.hint.detected_type')}: {} {t('label.type.unknown')}</span>
+      </div>
+    );
     
     const typeInfo = {
-      email: { icon: <Mail size={16} className="text-slate-500"/>, text: t('label.type.email') },
-      mobile: { icon: <Smartphone size={16} className="text-slate-500"/>, text: t('label.type.mobile_number') },
-      fpsId: { icon: <Hash size={16} className="text-slate-500"/>, text: t('label.type.fps_id') },
-      hkid: { icon: <IdCard size={16} className='text-slate-500'/>, text: t('label.type.hkid')}
+      email: { icon: <Mail size={16} />, text: t('label.type.email') },
+      mobile: { icon: <Smartphone size={16} />, text: t('label.type.mobile_number') },
+      fpsId: { icon: <Hash size={16} />, text: t('label.type.fps_id') },
+      hkid: { icon: <IdCard size={16} />, text: t('label.type.hkid')},
     }[detectedIdType];
 
     return (
-      <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 px-1">
+      <div className="flex items-center gap-2 text-sm px-1">
         {typeInfo.icon}
-        <span>{t('label.hint.detected_type')}: {typeInfo.text}</span>
+        <span>{t('label.hint.detected_type')}: {} {typeInfo.text}</span>
       </div>
     );
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-slate-900">
-      <main className="flex flex-col gap-8 items-center bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-2xl w-full max-w-md">
+    <div className="flex h-full items-center justify-center">
+      <div className="flex flex-col gap-8 items-center bg-[var(--background)] p-6 sm:p-8 rounded-2xl w-full max-w-lg shadow-lg">
         
-        <h1 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 tracking-wide">
+        <h1 className="text-2xl font-semibold tracking-wide">
           {t('page_title')}
         </h1>
 
-        <div className="w-full space-y-6">
-          {/* --- 移除了下拉選單，簡化介面 --- */}
+        <div className="w-full space-y-4">
           <div>
-            {/* 修正了這個 label 的 className */}
-            <label htmlFor="id-value" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('label.value')}</label>
+            <label htmlFor="id-value" className="block text-sm font-medium mb-1">{t('label.value')}</label>
             <input
               type="text"
               id="id-value"
               value={idValue}
               onChange={(e) => setIdValue(e.target.value)}
               placeholder={t('label.hint.unified')}
-              className="mt-1 block w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-200 rounded-md shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            />
-            <div className="h-6 mt-1">
+              className="mt-1 block w-full px-4 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-2 bg-transparent">
+              </input>
+
+            <div className=" mt-1">
               <DetectedTypeIndicator />
             </div>
           </div>
           
           <div>
-            <label htmlFor="id-value-confirm" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('label.confirm_value')}</label>
+            <label htmlFor="id-value-confirm" className="block text-sm font-medium mb-1">{t('label.confirm_value')}</label>
             <input
               type="text"
               id="id-value-confirm"
               value={confirmIdValue}
               onChange={(e) => formatConfirmId(e.target.value)}
               placeholder={t('label.hint.confirm')}
-              className="mt-1 block w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-200 rounded-md shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full px-4 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-2 bg-transparent"
             />
           </div>
-
           <div>
-            <label htmlFor="payment-amount" className='block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1'>{t('label.transaction_amount')}</label>
-            <input
-              type="number"
-              id="payment-amount"
-              value={paymentAmount === null ? '' : paymentAmount}
-              onChange={(e) => setPaymentAmount(e.target.value === '' ? null : Number(e.target.value))}
-              placeholder={t('label.hint.transaction_amount')}
-              className="mt-1 block w-full px-4 py-2.5 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-200 rounded-md shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            />
+            <label htmlFor="payment-amount" className='block text-sm font-medium mb-1'>{t('label.transaction_amount')}</label>
+            <div className="mt-1 block w-full px-4 py-2.5 border rounded-md shadow-sm focus:outline-none focus:ring-2 bg-transparent">
+                <div className="flex items-center rounded-md">
+                  <input
+                    id="price"
+                    name="price"
+                    type="text"
+                    placeholder={t('label.hint.transaction_amount')}
+                    onChange={(e) => setPaymentAmount(e.target.value === '' ? null : Number(e.target.value))}
+                    className="flex-1 bg-transparent pr-3 pl-1 focus:outline-none"
+                  />
+                  <div className="grid shrink-0 grid-cols-1 focus-within:relative">
+                    <select
+                      id="currency"
+                      name="currency"
+                      aria-label="Currency"
+                      onChange={(e) => setPaymentCurrency(e.target.value as HKQR_CURRENCY)}
+                      className="col-start-1 row-start-1 w-full appearance-none rounded-md  py-1.5 pr-7 pl-3 text-base focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 "
+                    >
+                      <option>HKD</option>
+                      <option>CNY</option>
+                    </select>
+                    <ChevronDownIcon
+                      aria-hidden="true"
+                      className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end "
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
 
         <button
           onClick={handleGenerateClick}
           disabled={isLoading || !idValue || !detectedIdType || idValue !== confirmIdValue}
-          className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white font-semibold h-12 px-6 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-slate-800 transition-all duration-200 ease-in-out transform active:scale-95 disabled:bg-indigo-400 disabled:cursor-not-allowed"
+          style={{ backgroundColor: 'var(--primary)' }}
+          className="w-full flex items-center justify-center gap-2 text-white font-semibold h-12 px-6 rounded-lg shadow-md transition-all duration-200 ease-in-out transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Sparkles size={20} />}
           {isLoading ? t('label.button.generating') : t('label.button.generate_qr_code')}
         </button>
 
-        <div className="w-full max-w-xs aspect-square p-4 bg-white rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+        <div className="w-full max-w-xs aspect-square p-4 bg-white dark:bg-black rounded-lg border flex items-center justify-center">
           {finalQrString ? (
             <QRCodeCanvas 
               value={finalQrString} 
@@ -242,12 +266,12 @@ export default function QrGeneratorPage() {
               }}
             />
           ) : (
-            <div className="text-center text-slate-500">
+            <div className="text-center" style={{ color: 'var(--foreground)'}}>
               <p>{t('label.text_qr_code_display')}</p>
             </div>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

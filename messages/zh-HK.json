@@ -1,8 +1,9 @@
 {
   "Home": {
-    "intro": "立即生成你嘅 FPS QR Code — no app, no login.",
+    "intro": "立即生成你嘅 FPS QR Code — ",
+    "intro_feature": "No App, No Login.",
     "button": {
-      "jump_to_qr": "撳呢度去生成 FPS QR Code"
+      "jump_to_qr": "生成 FPS QR Code"
     },
     "how_to": {
       "title": "如何操作",
@@ -21,7 +22,8 @@
           "fps_id":"轉數快識別碼",
           "mobile_number":"手提電話號碼",
           "email":"電郵地址",
-          "hkid": "香港身份證"
+          "hkid": "香港身份證",
+          "unknown": "未知"
         },
         "transaction_amount": "數目",
         "hint": {
@@ -38,11 +40,19 @@
             "generate_qr_code": "生成 QR Code"
         },
         "error" :{
-          "values_do_not_match": "",
-          "invalid_identifier": ""
+          "values_do_not_match": "數值對唔上！檢查輸入嘅地址啱唔啱！",
+          "invalid_identifier": "無效嘅地址"
         },
         "text_qr_code_display":"你嘅 QR Code 會喺呢度顯示"
-
     }
+  },
+  "Footer": {
+    "home": "主頁面",
+    "qr_generator": "QR 產生器",
+    "disclaimer": "如閣下使用本站服務，即視為同意本站嘅",
+    "terms_condition": "服務條款",
+    "and": "以及",
+    "privacy_notice": "隱私政策",
+    "press_here": "喺呢度"
   }
 }

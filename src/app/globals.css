@@ -3,6 +3,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #9400d3; 
 }
 
 .halloween {
@@ -11,6 +12,7 @@
   --primary: #9400d3;    /* 一种神秘的紫色作为强调色 */
   --secondary: #32cd32;  /* 像怪物史莱姆一样的亮绿色 */
 }
+
 
 @theme inline {
   --color-background: var(--background);
